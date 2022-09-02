@@ -12,7 +12,7 @@ import javax.inject.Inject
 class CatRepository @Inject constructor(
     private val api: ApiInterface
 ) {
-    suspend fun getCats(): Resource<Call<List<Cat>>>{
+    suspend fun getCats(): Resource<List<Cat>>{
         val response = try {
             api.getCats()
         } catch (e: Exception){
@@ -21,7 +21,7 @@ class CatRepository @Inject constructor(
         return Resource.Success(response)
     }
 
-    suspend fun getCat(id: String): Resource<Call<CatDetail>>{
+    suspend fun getCat(id: String): Resource<CatDetail>{
         val response = try {
             api.getCat(id)
         } catch (e: Exception){
@@ -30,7 +30,7 @@ class CatRepository @Inject constructor(
         return Resource.Success(response)
     }
 
-    suspend fun getCatPhotos(limit: Long, id: String, apiKey: String): Resource<Call<List<Image>>>{
+    suspend fun getCatPhotos(limit: Long, id: String, apiKey: String): Resource<List<Image>>{
         val response = try {
             api.getCatPhotos(id, limit, apiKey)
         } catch (e: Exception){

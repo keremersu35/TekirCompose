@@ -1,5 +1,6 @@
 package com.example.tekirkotlin.di
 
+import com.example.tekirkotlin.repository.CatRepository
 import com.example.tekirkotlin.service.ApiInterface
 import com.example.tekirkotlin.utils.Constants.BASE_URL
 import dagger.Module
@@ -13,6 +14,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Singleton
+    @Provides
+    fun provideCatRepository(
+        api: ApiInterface
+    ) = CatRepository(api)
 
     @Singleton
     @Provides
