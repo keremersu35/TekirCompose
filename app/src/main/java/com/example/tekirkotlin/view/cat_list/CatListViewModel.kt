@@ -1,6 +1,7 @@
 package com.example.tekirkotlin.view.cat_list
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tekirkotlin.model.Cat
@@ -52,16 +53,17 @@ class CatListViewModel @Inject constructor(
     }
 
 
-    private fun loadCats(){
+    fun loadCats(){
         viewModelScope.launch {
             isLoading.value = true
             when(val result = repository.getCats()){
                 is Resource.Success -> {
                     val cats = result.data!!.mapIndexed { index, item ->
                         println(item.image)
-                        Cat(item.id, item.name, item.origin, item.countryCode, item.description, item.image)
+                        Cat(item.id, item.name, item.origin, item.countryCode, item.description, item.image, item.lifeSpan)
                     } as List<Cat>
 
+                    catList.value = cats
                     errorMessage.value = ""
                 }
 

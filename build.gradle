@@ -1,6 +1,7 @@
 buildscript {
     repositories {
-        google()       // here
+        google()
+        mavenCentral()// here
     }
 
     ext {

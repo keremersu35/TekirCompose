@@ -10,4 +10,6 @@ data class Cat(
     val countryCode: String,
     val description: String,
     val image: Image?,
+    @SerializedName("life_span")
+    val lifeSpan: String?,
 )
