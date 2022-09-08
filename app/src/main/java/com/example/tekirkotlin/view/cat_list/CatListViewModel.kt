@@ -70,6 +70,7 @@ class CatListViewModel @Inject constructor(
                 is Resource.Error -> {
                     errorMessage.value = result.message!!
                 }
+                else -> {}
             }
         }
     }

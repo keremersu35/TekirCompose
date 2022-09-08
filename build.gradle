@@ -2,6 +2,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()// here
+        maven { url "https://jitpack.io" }
     }
 
     ext {

@@ -99,6 +99,12 @@ dependencies {
     implementation("io.coil-kt:coil-gif:2.2.0")
 
     implementation "com.google.accompanist:accompanist-pager:0.25.1"
+
+    implementation "com.airbnb.android:lottie-compose:5.2.0"
+
+    implementation 'com.github.MhmoudAlim:Compose-Ratingbar-library:0.1.0'
+
+    implementation "com.orhanobut:hawk:2.0.1"
 }
 
 kapt {

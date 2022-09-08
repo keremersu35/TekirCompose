@@ -1,7 +1,12 @@
 package com.example.tekirkotlin.utils
 
-fun String.checkName(country: String): String{
-    return when (country) {
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.core.content.ContextCompat.startActivity
+
+fun String.checkName(): String{
+    return when (this) {
         "United States" -> {
             "US"
         }
@@ -11,6 +16,13 @@ fun String.checkName(country: String): String{
         "United Arab Emirates" -> {
             "UAE"
         }
-        else -> country
+        else -> this
     }
+}
+
+
+fun linkToWebpage(url: String, context: Context) {
+    val openURL = Intent(Intent.ACTION_VIEW)
+    openURL.data = Uri.parse(url)
+    startActivity(context, openURL, null)
 }
