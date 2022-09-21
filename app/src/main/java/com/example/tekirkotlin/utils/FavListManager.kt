@@ -1,6 +1,7 @@
 package com.example.tekirkotlin.utils
 
 import android.content.Context
+import androidx.lifecycle.MutableLiveData
 import com.example.tekirkotlin.utils.Constants.BREEDS
 import com.orhanobut.hawk.Hawk
 
@@ -12,23 +13,35 @@ class FavListManager (private val context: Context) {
         Hawk.init(context).build()
     }
 
-    fun saveBreed(breedId: String) {
+    fun addBreed(breedId: String){
 
-        breedList = Hawk.get(BREEDS)
-
-        if(breedList != null){
+        if(Hawk.get<ArrayList<String>>(BREEDS) != null){
 
             if(checkBreed(breedId = breedId)){
-                breedList.remove(breedId)
-                Hawk.put(BREEDS, breedList)
-            }else{
-                breedList.add((breedId))
+                deleteBreed(breedId = breedId)
+            }
+            else{
+                breedList = Hawk.get(BREEDS)
+                breedList.add(breedId)
                 Hawk.put(BREEDS, breedList)
             }
-
         }else{
             breedList.add(breedId)
             Hawk.put(BREEDS, breedList)
+        }
+    }
+
+    private fun deleteBreed(breedId: String){
+
+        if(Hawk.get<ArrayList<String>>(BREEDS) != null){
+
+            if(checkBreed(breedId = breedId)){
+                breedList = Hawk.get(BREEDS)
+                breedList.remove(breedId)
+                Hawk.put(BREEDS, breedList)
+            }
+        }else{
+
         }
     }
 

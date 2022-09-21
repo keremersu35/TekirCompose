@@ -1,4 +1,4 @@
-package com.example.tekirkotlin.view.cat_list.components
+package com.example.tekirkotlin.view.components
 
 import android.content.Context
 import androidx.compose.foundation.background
@@ -12,6 +12,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,10 +34,11 @@ import com.example.tekirkotlin.utils.FavListManager
 import com.example.tekirkotlin.utils.checkName
 
 @Composable
-fun CatRow(navController: NavController, cat: Cat, isFav: Boolean) {
+fun CatRow(navController: NavController, cat: Cat) {
 
     val context: Context = LocalContext.current
     var favListManager = FavListManager(context)
+    var color by remember{mutableStateOf(Color.Gray)}
 
     Box() {
         Box(
@@ -46,14 +48,26 @@ fun CatRow(navController: NavController, cat: Cat, isFav: Boolean) {
                 .zIndex(1f)
                 .clip(CircleShape)
                 .background(Color.White)
+                .clickable(onClick =
+
+                    { favListManager.addBreed(breedId = cat.id)
+                        color = if(favListManager.checkBreed(cat.id)){
+                            Color.Red
+                        }else{
+                            Color.Gray
+                        }
+                    })
         ) {
+
+            if(favListManager.checkBreed(cat.id)){
+                color = Color.Red
+            }
 
             Icon(
                 Icons.Filled.Favorite, "",
                 modifier = Modifier
-                    .padding(5.dp)
-                    .align(Alignment.Center),
-                tint = Color.Gray
+                    .padding(5.dp),
+                tint = color
             )
         }
         Column(modifier = Modifier
@@ -141,29 +155,15 @@ fun CatRow(navController: NavController, cat: Cat, isFav: Boolean) {
                     Spacer(modifier = Modifier.width(15.dp))
 
 
-                    Box(modifier = Modifier.clickable (onClick= { favListManager.saveBreed(breedId = cat.id)}) ){
-
-                        if(isFav){
-                            println("KEREMRERMERME")
-                            Icon(
-                                painter = painterResource(id = R.drawable.life_span),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .width(15.dp)
-                                    .height(15.dp),
-                                tint = Color.Red
-                            )
-                        }else{
-                            println("KEREMRERMERME22")
-                            Icon(
-                                painter = painterResource(id = R.drawable.life_span),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .width(15.dp)
-                                    .height(15.dp),
-                                tint = Color.Gray
-                            )
-                        }
+                    Box(){
+                        Icon(
+                            painter = painterResource(id = R.drawable.life_span),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .width(15.dp)
+                                .height(15.dp),
+                            tint = Color.Gray
+                        )
                     }
 
                     Spacer(modifier = Modifier.width(3.dp))

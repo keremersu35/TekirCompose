@@ -1,17 +1,7 @@
 package com.example.tekirkotlin.view.cat_detail
 
-import android.os.Build.VERSION.SDK_INT
-import android.webkit.WebStorage
-import android.widget.RatingBar
-import android.widget.Space
-import androidx.compose.animation.core.DurationBasedAnimationSpec
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -21,48 +11,27 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.Alignment.Companion.CenterVertically
-import androidx.compose.ui.Alignment.Companion.End
-import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Alignment.Companion.TopCenter
-import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.ImageLoader
-import coil.compose.AsyncImage
-import coil.compose.SubcomposeAsyncImage
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
-import coil.request.ImageRequest
-import com.example.tekirkotlin.R
 import com.example.tekirkotlin.model.CatDetail
 import com.example.tekirkotlin.model.Image
+import com.example.tekirkotlin.utils.FavListManager
 import com.example.tekirkotlin.utils.Resource
 import com.example.tekirkotlin.utils.checkName
-import com.example.tekirkotlin.utils.linkToWebpage
-import com.example.tekirkotlin.view.cat_list.components.Lottie
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.mahmoudalim.compose_rating_bar.RatingBarView
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.example.tekirkotlin.view.components.Carousel
+import com.example.tekirkotlin.view.components.FeatureBox
+import com.example.tekirkotlin.view.components.LinkButton
+import com.example.tekirkotlin.view.components.Rating
 
 @Composable
 fun CatDetailScreen(id: String, navController: NavController,
@@ -77,6 +46,11 @@ fun CatDetailScreen(id: String, navController: NavController,
     }.value
 
     val scrollState = rememberScrollState()
+
+    var color by remember{mutableStateOf(Color.Gray)}
+
+    val context = LocalContext.current
+    val favListManager = FavListManager(context = context)
 
     Surface(color = MaterialTheme.colors.background,
         modifier = Modifier.fillMaxSize()) {
@@ -132,7 +106,20 @@ fun CatDetailScreen(id: String, navController: NavController,
                         fontWeight = FontWeight.Bold
                     )
 
-                    Icon(Icons.Filled.Favorite, contentDescription = "", tint = Color.Gray)
+                    Box(modifier = Modifier.clickable ( onClick = {
+                        favListManager.addBreed(breedId = cat.data!!.id)
+                        color = if(favListManager.checkBreed(cat.data?.id ?: "")){
+                            Color.Red
+                        }else{
+                            Color.Gray
+                        }
+                    })){
+                        if(favListManager.checkBreed(cat.data?.id ?: "")){
+                            color = Color.Red
+                        }
+
+                        Icon(Icons.Filled.Favorite, contentDescription = "", tint = color)
+                    }
                 }
 
                 Text(
@@ -165,101 +152,8 @@ fun CatDetailScreen(id: String, navController: NavController,
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
-@Composable
-fun Carousel(images: List<Image>) {
 
-    val imageLoader = ImageLoader.Builder(LocalContext.current)
-        .components {
-            if (SDK_INT >= 28) {
-                add(ImageDecoderDecoder.Factory())
-            } else {
-                add(GifDecoder.Factory())
-            }
-        }
-        .build()
 
-    HorizontalPager(count = images.size) { page ->
 
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(images[page].url)
-                .crossfade(true)
-                .build(),
-            contentDescription = "",
-            contentScale = ContentScale.None,
-            modifier = Modifier
-                .fillMaxWidth(),
-        )
-    }
-}
 
-@Composable
-fun FeatureBox(title: String, text: String?) {
 
-    Column(modifier = Modifier
-        .height(60.dp)
-        .width(100.dp)
-        .clip(RoundedCornerShape(10.dp))
-        .background(MaterialTheme.colors.onBackground)
-        .border(
-            width = 2.dp,
-            color = Color.Black,
-            shape = RoundedCornerShape(10.dp)
-        ), 
-        verticalArrangement = Arrangement.Center) {
-
-        Text(
-            text = title, modifier = Modifier.align(CenterHorizontally),
-            fontSize = 16.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center
-        )
-
-        Text(
-            text = text ?: "", modifier = Modifier.align(CenterHorizontally),
-            fontSize = 14.sp, textAlign = TextAlign.Center
-        )
-    }
-}
-
-@Composable
-fun Rating(title: String, number: Int?) {
-    if(number != null){
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 30.dp, end = 30.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-
-            Text(text = title)
-
-            RatingBarView(
-                rating = remember {mutableStateOf(number)},
-                isViewAnimated = true,
-                starIcon = painterResource(id = R.drawable.ic_star),
-                unRatedStarsColor = Color.LightGray,
-                ratedStarsColor = MaterialTheme.colors.onBackground,
-                starSize = 30.dp,
-            )
-        }
-    }
-    else Box(){
-
-    }
-}
-
-@Composable
-fun LinkButton(title: String, url: String) {
-    val context = LocalContext.current
-
-    Button(onClick = { linkToWebpage(url, context) }, modifier = Modifier
-        .height(55.dp)
-        .clip(RoundedCornerShape(5.dp))
-        .width(120.dp)
-        .border(1.dp, Color.Black, RoundedCornerShape(5.dp)),
-        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.onSurface)
-    ) {
-        
-        Icon(painter = painterResource(id = R.drawable.paw_icon), tint = Color.White, contentDescription = "",
-        modifier = Modifier.size(30.dp).padding(5.dp))
-        
-        Text(text = title, color = Color.White)
-    }
-}

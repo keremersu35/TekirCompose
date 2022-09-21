@@ -12,6 +12,7 @@ import androidx.navigation.navArgument
 import com.example.tekirkotlin.view.cat_detail.CatDetailScreen
 import com.example.tekirkotlin.view.cat_list.CatListScreen
 import com.example.tekirkotlin.ui.theme.TekirKotlinTheme
+import com.example.tekirkotlin.view.cat_fav_list.CatFavListScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,6 +36,10 @@ class MainActivity : ComponentActivity() {
                             it.arguments?.getString("breedId")
                         }
                         CatDetailScreen(id = breedId?: "", navController = navController)
+                    }
+
+                    composable(route = "cat_fav_list_screen"){
+                        CatFavListScreen(navController = navController)
                     }
                 }
             }

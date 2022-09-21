@@ -1,4 +1,4 @@
-package com.example.tekirkotlin.view.cat_list.components
+package com.example.tekirkotlin.view.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,15 +12,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.rememberLottieComposition
-import com.example.tekirkotlin.R
 import com.example.tekirkotlin.model.Cat
-import com.example.tekirkotlin.utils.FavListManager
 import com.example.tekirkotlin.view.cat_list.CatListViewModel
 
 @Composable
@@ -33,8 +28,6 @@ fun CatList(navController: NavController,
     val isLoading by remember {viewModel.isLoading}
 
     CatListView(catList, navController)
-
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading))
 
     Box( modifier = Modifier.fillMaxSize()){
         if(isLoading){
@@ -58,17 +51,9 @@ fun CatList(navController: NavController,
 @Composable
 fun CatListView(cats: List<Cat>, navController: NavController) {
 
-    val context = LocalContext.current
-    val favListManager = FavListManager(context)
-
     LazyVerticalGrid(columns = GridCells.Fixed(2),){
         items(cats){ cat ->
-            if(favListManager.checkBreed(breedId = cat.id)){
-                CatRow(navController = navController, cat = cat, true)
-            }else{
-                CatRow(navController = navController, cat = cat, false)
-            }
-
+            CatRow(navController = navController, cat = cat)
         }
     }
 }

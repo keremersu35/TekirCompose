@@ -5,8 +5,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.typography
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -15,7 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.tekirkotlin.R
-import com.example.tekirkotlin.view.cat_list.components.*
+import com.example.tekirkotlin.view.components.CatList
+import com.example.tekirkotlin.view.components.SearchBar
 
 @Composable
 fun CatListScreen(navController: NavController, viewModel: CatListViewModel = hiltViewModel()) {
@@ -27,17 +32,32 @@ fun CatListScreen(navController: NavController, viewModel: CatListViewModel = hi
             .wrapContentHeight()
             .background(Color.White)) {
 
-            Image(
-                painterResource(R.drawable.cat_dashboard),
-                "Cat",
-                modifier = Modifier
-                    .height(60.dp)
-                    .align(CenterHorizontally)
-                    .padding(5.dp))
+            Row(modifier = Modifier.fillMaxWidth()){
+                Spacer(modifier = Modifier.weight(0.3f))
+                Column(modifier = Modifier
+                    .align(CenterVertically)
+                    .weight(0.3f)){
+                    Image(
+                        painterResource(R.drawable.cat_dashboard),
+                        "Cat",
+                        modifier = Modifier
+                            .height(60.dp)
+                            .align(Alignment.CenterHorizontally)
+                            .padding(5.dp))
 
-            Text(text = "Tekir", style = typography.h1, modifier = Modifier
-                .wrapContentHeight()
-                .align(CenterHorizontally))
+                    Text(text = "Tekir", style = MaterialTheme.typography.h1, modifier = Modifier
+                        .wrapContentHeight()
+                        .align(Alignment.CenterHorizontally))
+                }
+
+                Icon(
+                    Icons.Filled.Favorite, contentDescription = "", tint = Color.Red,
+                    modifier = Modifier
+                        .size(50.dp)
+                        .align(CenterVertically)
+                        .padding(5.dp)
+                        .weight(0.3f).clickable( onClick = {navController.navigate("cat_fav_list_screen")  }))
+            }
 
             Spacer(modifier = Modifier.height(5.dp))
 

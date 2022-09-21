@@ -1,4 +1,4 @@
-package com.example.tekirkotlin.view.cat_list.components
+package com.example.tekirkotlin.view.components
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
