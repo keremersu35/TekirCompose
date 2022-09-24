@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.tekirkotlin.model.Cat
 import com.example.tekirkotlin.model.CatDetail
 import com.example.tekirkotlin.model.Image
 import com.example.tekirkotlin.utils.FavListManager
@@ -107,7 +108,8 @@ fun CatDetailScreen(id: String, navController: NavController,
                     )
 
                     Box(modifier = Modifier.clickable ( onClick = {
-                        favListManager.addBreed(breedId = cat.data!!.id)
+                        favListManager.addBreed(cat = Cat(id = cat.data!!.id, cat.data.name, cat.data.origin, cat.data.countryCode, cat.data.description,
+                            catPhotos.data!![0], cat.data.lifeSpan))
                         color = if(favListManager.checkBreed(cat.data?.id ?: "")){
                             Color.Red
                         }else{

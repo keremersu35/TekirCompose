@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,12 +22,12 @@ fun CatFavList(navController: NavController,
             viewModel: CatFavListViewModel = hiltViewModel()
 ) {
 
-    val catList by remember {viewModel.catList}
-    println("AAA$catList")
+    var catList by remember {viewModel.getCats()}
     val errorMessage by remember {viewModel.errorMessage}
     val isLoading by remember {viewModel.isLoading}
+    var isFav = remember{ mutableStateOf(true)}
 
-    CatFavListView(catList, navController)
+    CatFavListView(catList, navController, isFav)
 
     Box( modifier = Modifier.fillMaxSize()){
         if(isLoading){
@@ -40,22 +38,25 @@ fun CatFavList(navController: NavController,
                 Lottie()
             }
 
-            //CircularProgressIndicator(modifier = Modifier.align(Center), color = Color.Blue)
         }
         if(errorMessage.isNotEmpty()){
             RetryView(error = errorMessage) {
-                viewModel.getCats()
+                catList = viewModel.getCats().value
             }
+        }
+
+        if(!isFav.value){
+            catList = viewModel.getCats().value
         }
     }
 }
 
 @Composable
-fun CatFavListView(cats: List<Cat>, navController: NavController) {
+fun CatFavListView(cats: List<Cat>, navController: NavController, isFav: MutableState<Boolean>) {
 
     LazyVerticalGrid(columns = GridCells.Fixed(2),){
         items(cats){ cat ->
-            CatRow(navController = navController, cat = cat)
+            CatRow(navController = navController, cat = cat, isFav)
         }
     }
 }

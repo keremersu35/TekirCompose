@@ -1,32 +1,34 @@
 package com.example.tekirkotlin.utils
 
 import android.content.Context
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.runtime.mutableStateOf
+import com.example.tekirkotlin.model.Cat
 import com.example.tekirkotlin.utils.Constants.BREEDS
 import com.orhanobut.hawk.Hawk
 
 class FavListManager (private val context: Context) {
 
-    var breedList= ArrayList<String>()
+    var breedList= ArrayList<Cat>()
+    var indexList = ArrayList<Int>()
 
     init {
         Hawk.init(context).build()
     }
 
-    fun addBreed(breedId: String){
+    fun addBreed(cat: Cat){
 
-        if(Hawk.get<ArrayList<String>>(BREEDS) != null){
+        if(Hawk.get<ArrayList<Cat>>(BREEDS) != null){
 
-            if(checkBreed(breedId = breedId)){
-                deleteBreed(breedId = breedId)
+            if(checkBreed(breedId = cat.id)){
+                deleteBreed(breedId = cat.id)
             }
             else{
                 breedList = Hawk.get(BREEDS)
-                breedList.add(breedId)
+                breedList.add(cat)
                 Hawk.put(BREEDS, breedList)
             }
         }else{
-            breedList.add(breedId)
+            breedList.add(cat)
             Hawk.put(BREEDS, breedList)
         }
     }
@@ -37,20 +39,23 @@ class FavListManager (private val context: Context) {
 
             if(checkBreed(breedId = breedId)){
                 breedList = Hawk.get(BREEDS)
-                breedList.remove(breedId)
+                for(i in breedList){
+                    if(i.id == breedId){
+                        indexList.add(breedList.indexOf(i))
+                    }
+                }
+                breedList.removeAt(indexList[0])
                 Hawk.put(BREEDS, breedList)
             }
-        }else{
-
         }
     }
 
     fun checkBreed(breedId: String): Boolean{
 
-        val list: ArrayList<String> = Hawk.get(BREEDS) ?: return false
+        val list: ArrayList<Cat> = Hawk.get(BREEDS) ?: return false
 
-        if(list.contains(breedId)){
-            return true
+        for(i in list){
+            if(i.id == breedId) return true
         }
         return false
     }

@@ -1,6 +1,7 @@
 package com.example.tekirkotlin.view.cat_fav_list
 
 import android.content.Context
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,7 +19,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CatFavListViewModel @Inject constructor(
-    private val repository: CatRepository,
     @ApplicationContext private val context: Context,
 ): ViewModel(){
 
@@ -28,8 +28,7 @@ class CatFavListViewModel @Inject constructor(
 
     private var initialCatList = listOf<Cat>()
     private var isSearchStarting = true
-    var breedList = ArrayList<Cat>()
-    var breeds = ArrayList<String>()
+    var breeds = ArrayList<Cat>()
 
     fun searchCatList(query: String) {
         val listToSearch = if(isSearchStarting) {
@@ -54,37 +53,16 @@ class CatFavListViewModel @Inject constructor(
         }
     }
 
-    private fun getCatIds(): ArrayList<String>{
-        Hawk.init(context).build()
-        breeds = Hawk.get(BREEDS)
-        return breeds
-    }
-
-    fun getCats(){
-        val breeds = getCatIds()
-        for(i in breeds){
-            println("sonuc$i")
-            loadCat(i)
-        }
-        catList.value = breedList
-    }
-
-    private fun loadCat(breedId: String){
+    fun getCats(): MutableState<List<Cat>> {
         viewModelScope.launch {
             isLoading.value = true
-            when(val result = repository.getCat(breedId)){
-                is Resource.Success -> {
-                    val cat = result.data!!
-                    breedList.add(Cat(cat.id, cat.name, cat.origin, cat.countryCode, cat.description, null, cat.lifeSpan))
-                    println("kerem"+catList.value)
-                    errorMessage.value = ""
-                }
+            Hawk.init(context).build()
+            breeds = Hawk.get(BREEDS)
+            catList.value = breeds
 
-                is Resource.Error -> {
-                    errorMessage.value = result.message!!
-                }
-                else -> {}
-            }
+            isLoading.value = false
+
         }
+        return catList
     }
 }

@@ -34,7 +34,7 @@ import com.example.tekirkotlin.utils.FavListManager
 import com.example.tekirkotlin.utils.checkName
 
 @Composable
-fun CatRow(navController: NavController, cat: Cat) {
+fun CatRow(navController: NavController, cat: Cat, isFav: MutableState<Boolean>) {
 
     val context: Context = LocalContext.current
     var favListManager = FavListManager(context)
@@ -50,12 +50,13 @@ fun CatRow(navController: NavController, cat: Cat) {
                 .background(Color.White)
                 .clickable(onClick =
 
-                    { favListManager.addBreed(breedId = cat.id)
+                    { favListManager.addBreed(cat = cat)
                         color = if(favListManager.checkBreed(cat.id)){
                             Color.Red
                         }else{
                             Color.Gray
                         }
+                    isFav.value = false
                     })
         ) {
 
@@ -153,7 +154,6 @@ fun CatRow(navController: NavController, cat: Cat) {
                     )
 
                     Spacer(modifier = Modifier.width(15.dp))
-
 
                     Box(){
                         Icon(
