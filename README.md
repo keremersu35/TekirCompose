@@ -1,4 +1,4 @@
-# Tekir-v2 🐈
+# Tekir 🐈
 
 Tekir, API'den kedi ırkları ve bilgilerinin yer aldığı bir uygulama.
 
